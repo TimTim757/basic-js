@@ -20,13 +20,68 @@ const { NotImplementedError } = require('../extensions/index.js');
  * 
  */
 class VigenereCipheringMachine {
-  encrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  constructor(isDirect = true) {
+    this.isDirect = isDirect;
   }
-  decrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+
+  encrypt(message, key) {
+    if (message === undefined || key === undefined) {
+      throw new Error('Incorrect arguments!');
+    }
+
+    message = message.toUpperCase();
+    key = key.toUpperCase();
+    let result = '';
+
+    let j = 0;
+    for (let i = 0; i < message.length; i++) {
+      const messageChar = message[i];
+      if (messageChar >= 'A' && messageChar <= 'Z') {
+        const messageCode = messageChar.charCodeAt(0);
+        const keyCode = key[j % key.length].charCodeAt(0);
+        const encryptedChar = String.fromCharCode(((messageCode - 65 + keyCode - 65) % 26) + 65);
+        result += encryptedChar;
+        j++;
+      } else {
+        result += messageChar;
+      }
+    }
+
+    if (!this.isDirect) {
+      result = result.split('').reverse().join('');
+    }
+
+    return result;
+  }
+
+  decrypt(message, key) {
+    if (message === undefined || key === undefined) {
+      throw new Error('Incorrect arguments!');
+    }
+
+    message = message.toUpperCase();
+    key = key.toUpperCase();
+    let result = '';
+
+    let j = 0;
+    for (let i = 0; i < message.length; i++) {
+      const messageChar = message[i];
+      if (messageChar >= 'A' && messageChar <= 'Z') {
+        const messageCode = messageChar.charCodeAt(0);
+        const keyCode = key[j % key.length].charCodeAt(0);
+        const decryptedChar = String.fromCharCode(((messageCode - keyCode + 26) % 26) + 65);
+        result += decryptedChar;
+        j++;
+      } else {
+        result += messageChar;
+      }
+    }
+
+    if (!this.isDirect) {
+      result = result.split('').reverse().join('');
+    }
+
+    return result;
   }
 }
 
